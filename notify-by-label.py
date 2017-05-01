@@ -83,7 +83,7 @@ logging.info('Sending slack message to channel: %s' % (args.schannel))
 slack = Slacker(args.stoken)
 slack.chat.post_message(
     args.schannel,
-    text='@here Outstanding Pull Requests for Project <https://github.com/%s/%s/pulls|%s>' % (args.ghorg,args.ghrepo,args.ghrepo),
+    text='<!here> Outstanding Pull Requests for Project <https://github.com/%s/%s/pulls|%s>' % (args.ghorg,args.ghrepo,args.ghrepo),
     parse=True,
     attachments=attachments,
     icon_emoji=args.semoji,
