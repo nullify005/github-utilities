@@ -37,6 +37,15 @@ def get_pr_strs_for_label(label):
         ret.append('<%s|%s> by %s @ %s' % (pr.html_url,pr.title,user.name,pr.created_at))
     return ret
 
+def label_is_intersting(name):
+    if not args.labels:
+        return True
+    labels = args.labels.split(',')
+    for l in labels:
+        if l in name:
+            return True
+    return False
+
 ## setup the logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -45,13 +54,14 @@ logging.info('starting')
 ## arg parser
 parser = argparse.ArgumentParser(description='Scan all open Pull Requests and notify into Slack if there are reviews outstanding')
 parser.add_argument('--ghtoken', dest='ghtoken', required=True, action='store', help='Github API Token')
-parser.add_argument('--ghorg', dest='ghorg', default='TutoringAustralasia', action='store', help='Github Organisation')
+parser.add_argument('--ghorg', dest='ghorg', default='Studiosity', action='store', help='Github Organisation')
 parser.add_argument('--ghrepo', dest='ghrepo', default='eureka', action='store', help='Github Repository')
 parser.add_argument('--stoken', dest='stoken', required=True, action='store', help='Slack API Token')
 parser.add_argument('--schannel', dest='schannel', default='#general', action='store', help='Slack Channel')
 parser.add_argument('--suser', dest='suser', default='prcalltoaction', action='store', help='Slack User')
 parser.add_argument('--semoji', dest='semoji', default=':warning:', action='store', help='Slack Emoji Icon')
 parser.add_argument('--verbose', dest='verbose', action='store_true', help='Increase Logging Verbosity')
+parser.add_argument('--labels', dest='labels', default=False, action='store', help='The labels to report on, comma seperated')
 args = parser.parse_args()
 
 ## setup the logger
@@ -63,6 +73,9 @@ logging.info('Searching %s/%s for Pull Requests by Label' % (args.ghorg,args.ghr
 labels = get_gh_labels()
 attachments = []
 for label in labels:
+    if not label_is_intersting(label.name):
+        logging.info('Ignoring label %s' % (label.name))
+        continue
     issues = get_pr_strs_for_label(label.name)
     logging.info('There are %d issues for label: %s' % (len(issues),label.name))
     if issues:
