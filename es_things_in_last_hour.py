@@ -11,8 +11,8 @@ import urllib
 
 KIBANA_TEMPLATE = 'https://%s/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-%s,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
 SEARCHES = {
-    'production': 'deployment: "prd-01" AND message: error',
-    'infra': 'deployment: "infra" AND message: error'
+    'production': 'deployment: "prd-01" AND (message: error OR source: "/var/log/snort/alert")',
+    'infra': 'deployment: "infra" AND (message: error OR source: "/var/log/snort/alert")'
 }
 TIMEFRAME = '1h'
 
