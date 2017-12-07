@@ -9,7 +9,7 @@ import os
 import logging
 import urllib
 
-KIBANA_SEARCH = 'https://%s/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1h,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
+KIBANA_TEMPLATE = 'https://%s/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-%s,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
 SEARCHES = {
     'production': 'deployment: "prd-01" AND message: error',
     'infra': 'deployment: "infra" AND message: error'
@@ -104,7 +104,7 @@ def do_search(environment,query):
         slack = SlackMessage(os.environ.get('SLACK_HOOK_URL'),'#monitoring')
         slack.header = '*interesting log lines in the last %s*: %s' % (TIMEFRAME,environment)
         slack.warning()
-        kibana = KIBANA_SEARCH % (os.environ.get('ELASTIC_HOST'),urllib.quote_plus(query))
+        kibana = KIBANA_TEMPLATE % (os.environ.get('ELASTIC_HOST'),TIMEFRAME,urllib.quote_plus(query))
         slack.text = '<%s|kibana search>: %s\n```%s```' % (kibana,query,'\n'.join(lines))
         slack.send()
 
