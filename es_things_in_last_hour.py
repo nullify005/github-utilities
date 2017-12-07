@@ -9,7 +9,7 @@ import os
 import logging
 import urllib
 
-KIBANA_SEARCH = 'https://sensu.yak.run/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1h,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
+KIBANA_SEARCH = 'https://%s/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1h,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
 SEARCHES = {
     'production': 'deployment: "prd-01" AND message: error',
     'infra': 'deployment: "infra" AND message: error'
@@ -90,7 +90,7 @@ def do_search(environment,query):
             }
         }
     }
-    conn = httplib.HTTPSConnection('sensu.yak.run')
+    conn = httplib.HTTPSConnection(os.environ.get('ELASTIC_HOST'))
     conn.request(method='GET', url='/esapi/_search', body=json.dumps(body), headers=headers)
     j = json.loads(conn.getresponse().read())
     lines = []
@@ -104,7 +104,7 @@ def do_search(environment,query):
         slack = SlackMessage(os.environ.get('SLACK_HOOK_URL'),'#monitoring')
         slack.header = '*interesting log lines in the last %s*: %s' % (TIMEFRAME,environment)
         slack.warning()
-        kibana = KIBANA_SEARCH % (urllib.quote_plus(query))
+        kibana = KIBANA_SEARCH % (os.environ.get('ELASTIC_HOST'),urllib.quote_plus(query))
         slack.text = '<%s|kibana search>: %s\n```%s```' % (kibana,query,'\n'.join(lines))
         slack.send()
 
