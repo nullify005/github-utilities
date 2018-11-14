@@ -12,7 +12,7 @@ import urllib
 KIBANA_TEMPLATE = 'https://%s/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-%s,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
 SEARCHES = {
     'production': '(deployment: "prd-01" OR environment: "production") AND (message: error OR source: "/var/log/snort/alert")',
-    'infra': 'deployment: "infra" AND (message: error OR source: "/var/log/snort/alert")',
+    'infra': 'deployment: "infra" AND (message: error OR source: "/var/log/snort/alert") AND NOT (message: "TLS keys are out of sync")',
     'staging': '(environment: "stg-01" OR environment: "stg-02") AND source: "/var/log/snort/alert"',
 }
 TIMEFRAME = '1h'
