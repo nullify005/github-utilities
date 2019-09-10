@@ -108,7 +108,7 @@ def do_search(environment,query):
         message = hit['_source']['message']
         lines.append('%s %s %s %s' % (date, host, source, message))
     if len(lines):
-        slack = SlackMessage(os.environ.get('SLACK_HOOK_URL'),'#monitoring')
+        slack = SlackMessage(os.environ.get('SLACK_HOOK_URL'), os.environ.get('SLACK_CHANNEL'))
         slack.header = '*interesting log lines in the last %s*: %s' % (TIMEFRAME,environment)
         slack.warning()
         kibana = KIBANA_TEMPLATE % (os.environ.get('ELASTIC_HOST'),TIMEFRAME,urllib.quote_plus(query))
