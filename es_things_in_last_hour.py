@@ -112,7 +112,7 @@ def do_search(environment,query):
         slack.header = '*interesting log lines in the last %s*: %s' % (TIMEFRAME,environment)
         slack.warning()
         kibana = KIBANA_TEMPLATE % (os.environ.get('ELASTIC_HOST'),TIMEFRAME,urllib.quote_plus(query))
-        slack.text = '<%s|kibana search>: %s\n```%s```' % (kibana,query,'\n'.join(lines))
+        slack.text = '<%s|kibana search>:\n%s' % (kibana,'\n'.join(lines))
         slack.send()
 
 ## MAIN ##
