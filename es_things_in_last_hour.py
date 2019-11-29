@@ -4,6 +4,7 @@ import json
 import httplib
 from urllib2 import Request, urlopen, URLError, HTTPError
 import base64
+import re
 import sys
 import os
 import logging
@@ -110,7 +111,14 @@ def do_search(environment,query):
     if len(lines):
         slack = SlackMessage(os.environ.get('SLACK_HOOK_URL'), os.environ.get('SLACK_CHANNEL'))
         slack.header = '*interesting log lines in the last %s*: %s' % (TIMEFRAME,environment)
-        slack.warning()
+
+        # If the lines contain anything about production PG, witness or Redis systems mark the notice as 'danger'
+        r = re.compile(' prd-(pgl|wit|red)-[0-9]{2}.yak.run ')
+        if any(r.search(line) for line in lines):
+            slack.danger()
+        else:
+            slack.warning()
+
         kibana = KIBANA_TEMPLATE % (os.environ.get('ELASTIC_HOST'),TIMEFRAME,urllib.quote_plus(query))
         slack.text = '<%s|kibana search>:\n%s' % (kibana,'\n'.join(lines))
         slack.send()
