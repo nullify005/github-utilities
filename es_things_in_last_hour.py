@@ -116,6 +116,7 @@ def do_search(environment,query):
         r = re.compile(' prd-(pgl|wit|red)-[0-9]{2}.yak.run ')
         if any(r.search(line) for line in lines):
             slack.danger()
+            slack.header += ' @devs'
         else:
             slack.warning()
 
