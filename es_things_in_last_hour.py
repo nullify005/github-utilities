@@ -117,7 +117,7 @@ def do_search(environment,query):
         if any(r.search(line) for line in lines):
             slack.danger()
             # Add mention to @devs to the message (using the group slack ID)
-            slack.header += ' <@SJWS64A2X>'
+            slack.header += ' <!subteam^SJWS64A2X>'
         else:
             slack.warning()
 
