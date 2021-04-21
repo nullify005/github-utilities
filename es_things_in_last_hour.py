@@ -13,7 +13,9 @@ import urllib
 KIBANA_TEMPLATE = 'https://%s/kibana/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-%s,mode:quick,to:now))&_a=(query:(query_string:(query:\'%s\')),sort:!(\'@timestamp\',desc))'
 SEARCHES = {
     'production': "(deployment: \"prd-01\" OR environment: \"production\") "
-        "AND NOT (type: rocketchat AND message: \"body: { success: false, error: 'User not found.', stack: undefined }\") "
+        "AND NOT (type: rocketchat AND ("
+        "message: \"body: { success: false, error: 'User not found.', stack: undefined }\" OR "
+        "message: \"User is already an owner [error-user-already-owner]\")) "
         "AND (message: error OR source: \"/var/log/snort/alert\" OR "
         "((message: \" 503 \" OR message: \" 504 \") AND "
         " source: \"/var/log/nginx/access.log\"))",
