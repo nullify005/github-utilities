@@ -15,6 +15,7 @@ SEARCHES = {
     'production': "(deployment: \"prd-01\" OR environment: \"production\") "
         "AND NOT (type: rocketchat AND ("
         "message: \"body: { success: false, error: 'User not found.', stack: undefined }\" OR "
+        "message: \"errorType: 'error-user-already-owner'\" OR "
         "message: \"User is already an owner [error-user-already-owner]\")) "
         "AND (message: error OR source: \"/var/log/snort/alert\" OR "
         "((message: \" 503 \" OR message: \" 504 \") AND "
