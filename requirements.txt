@@ -5,4 +5,4 @@ PyJWT==1.5.0
 pyparsing==2.2.0
 requests==2.20.0
 six==1.10.0
-slacker==0.9.42
+git+git://github.com/Studiosity/slacker@studiosity-patched#egg=slacker
